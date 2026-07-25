@@ -1,14 +1,21 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
+import type { Task } from './utils/Data-Task'
+import UserTask from './components/UserTask'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const task: Task = {
+    title: 'Dummy',
+    id: 1234,
+    due_date: new Date(2026, 7, 8)
+  }
 
   return (
-    <div>The homepage</div>
+    <>
+      <UserTask task={task}></UserTask>
+      <UserTask task={task}></UserTask>
+      <UserTask task={task}></UserTask>
+      <UserTask task={task}></UserTask>
+    </>
   )
 }
 
