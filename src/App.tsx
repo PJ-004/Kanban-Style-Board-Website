@@ -1,21 +1,25 @@
 import './App.css'
-import type { Task } from './utils/Data-Task'
+import { tasks, statuses } from './utils/Data-Task'
 import UserTask from './components/UserTask'
 
 function App() {
-  const task: Task = {
-    title: 'Dummy',
-    id: 1234,
-    due_date: new Date(2026, 7, 8)
-  }
+  const columns = statuses.map((status) => {
+    const tasksInColumn = tasks.filter((task) => task.status === status)
+    return {
+      status,
+      tasks: tasksInColumn
+    }
+  })
 
   return (
-    <>
-      <UserTask task={task}></UserTask>
-      <UserTask task={task}></UserTask>
-      <UserTask task={task}></UserTask>
-      <UserTask task={task}></UserTask>
-    </>
+    <div className='flex divide-x'>
+      {columns.map((column) => (
+        <div>
+          <h2 className='text-3xl p-2 font-bold text-red-500'>{column.status}</h2>
+          {column.tasks.map((task) => <UserTask task={task}></UserTask>)}
+        </div>
+      ))}
+    </div>
   )
 }
 
