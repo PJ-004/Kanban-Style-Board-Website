@@ -1,14 +1,14 @@
 import './App.css'
-import { useState, useEffect } from 'react'
-import { supabase } from './utils/supabase'
 import { tasks, statuses } from './utils/Data-Task'
 import UserTask from './components/UserTask'
 import SignIn from './components/SignIn'
 
 export default function App() {
+  /*
   const [todos, setTodos] = useState([])
 
   useEffect(() => {
+    
     async function getTodos() {
       const { data: todos } = await supabase.from('users').select()
 
@@ -19,6 +19,7 @@ export default function App() {
 
     getTodos()
   }, [])
+  */
 
   const columns = statuses.map((status) => {
     const tasksInColumn = tasks.filter((task) => task.status === status)
@@ -38,12 +39,6 @@ export default function App() {
           </div>
         ))}
       </div>
-
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>{todo.user_name}</li>
-        ))}
-      </ul>
 
       <SignIn></SignIn>
     </>
