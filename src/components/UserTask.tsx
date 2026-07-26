@@ -7,7 +7,7 @@ const UserTask = ({task}: {task: Task}) => {
                 </div>
                 <div className="flex justify-between text-sm text-gray-700">
                     <div>ID: {task.id} </div>
-                    <div>Due At: {task.due_date.toLocaleDateString()}</div>
+                    <div>Due At: {task.due_date ? task.due_date.toLocaleDateString() : "N/A"}</div>
                 </div>
             </div>
 }
