@@ -3,9 +3,9 @@ import './App.css'
 import { statuses, type Task } from './utils/Data-Task'
 import Column from './components/Column'
 import AddTask from './components/AddTask'
+import BoardStats from './components/BoardStats'
 import { supabase } from './utils/supabase'
 import type { Session } from '@supabase/supabase-js'
-import BoardStats from './components/BoardStats'
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -13,6 +13,7 @@ export default function App() {
   const [tasksLoading, setTasksLoading] = useState(false)
   const [tasks, setTasks] = useState<Task[]>([])
   const [fetchError, setFetchError] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
 
   const fetchTasks = async () => {
     setTasksLoading(true)
@@ -47,6 +48,10 @@ export default function App() {
 
     setLoading(false)
   }
+
+  const filteredTasks = tasks.filter((task) =>
+    task.title.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   useEffect(() => {
     const initSession = async () => {
@@ -105,12 +110,22 @@ export default function App() {
 
       <BoardStats tasks={tasks} />
 
+      <div className="flex justify-center px-4 pb-2">
+        <input
+          type="text"
+          placeholder="Search tasks by title..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border border-gray-600 bg-gray-800 text-white placeholder-gray-400 rounded px-3 py-1.5 w-72"
+        />
+      </div>
+
       <div className="flex justify-center gap-6 flex-wrap">
         {statuses.map((status) => (
           <Column
             key={status}
             status={status}
-            tasks={tasks.filter((task) => task.status === status)}
+            tasks={filteredTasks.filter((task) => task.status === status)}
             onTaskUpdated={fetchTasks}
             loading={tasksLoading}
           />
