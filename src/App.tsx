@@ -5,6 +5,7 @@ import Column from './components/Column'
 import AddTask from './components/AddTask'
 import { supabase } from './utils/supabase'
 import type { Session } from '@supabase/supabase-js'
+import BoardStats from './components/BoardStats'
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -101,6 +102,8 @@ export default function App() {
           </div>
         </div>
       )}
+
+      <BoardStats tasks={tasks} />
 
       <div className="flex justify-center gap-6 flex-wrap">
         {statuses.map((status) => (
