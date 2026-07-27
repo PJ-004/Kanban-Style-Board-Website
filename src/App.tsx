@@ -17,9 +17,22 @@ export default function App() {
     if (error) console.error(error)
   }
 
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) console.error(error)
+  const handleNewGuestSession = async () => {
+    setLoading(true)
+    setTasks([])
+
+    // End the current guest session
+    await supabase.auth.signOut()
+
+    // Immediately spin up a brand new anonymous session
+    const { data, error } = await supabase.auth.signInAnonymously()
+    if (error) {
+      console.error(error)
+    } else {
+      setSession(data.session)
+    }
+
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -29,7 +42,6 @@ export default function App() {
       if (session) {
         setSession(session)
       } else {
-        // No session at all (first launch, or fully logged out) — create a guest session automatically
         const { data, error } = await supabase.auth.signInAnonymously()
         if (error) {
           console.error(error)
@@ -72,10 +84,10 @@ export default function App() {
 
       <div className="p-4 flex justify-center mt-8">
         <button
-          onClick={handleLogout}
+          onClick={handleNewGuestSession}
           className="px-3 py-1 border-2 border-red-500 text-red-500 rounded font-bold"
         >
-          Log Out
+          New Guest Session
         </button>
       </div>
     </div>
