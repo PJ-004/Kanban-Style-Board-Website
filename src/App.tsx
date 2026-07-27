@@ -24,10 +24,25 @@ export default function App() {
   }
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
+    const initSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+
+      if (session) {
+        setSession(session)
+      } else {
+        // No session at all (first launch, or fully logged out) — create a guest session automatically
+        const { data, error } = await supabase.auth.signInAnonymously()
+        if (error) {
+          console.error(error)
+        } else {
+          setSession(data.session)
+        }
+      }
+
       setLoading(false)
-    })
+    }
+
+    initSession()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => setSession(session)
@@ -41,11 +56,10 @@ export default function App() {
   }, [session])
 
   if (loading) return <div>Loading...</div>
-  if (!session) return <SignIn />
 
   return (
     <div className="min-h-screen bg-gray-900">
-      <AddTask userId={session.user.id} onTaskAdded={fetchTasks} />
+      <AddTask userId={session!.user.id} onTaskAdded={fetchTasks} />
       <div className="flex justify-center gap-6">
         {statuses.map((status) => (
           <Column
@@ -57,7 +71,7 @@ export default function App() {
         ))}
       </div>
 
-      <div className="p-4 flex justify-center">
+      <div className="p-4 flex justify-center mt-8">
         <button
           onClick={handleLogout}
           className="px-3 py-1 border-2 border-red-500 text-red-500 rounded font-bold"
