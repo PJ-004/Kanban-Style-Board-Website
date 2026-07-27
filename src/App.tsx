@@ -1,57 +1,69 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import { tasks, statuses } from './utils/Data-Task'
-import UserTask from './components/UserTask'
+import { statuses, type Task } from './utils/Data-Task'
+import Column from './components/Column'
 import SignIn from './components/SignIn'
+import AddTask from './components/AddTask'
 import { supabase } from './utils/supabase'
 import type { Session } from '@supabase/supabase-js'
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [tasks, setTasks] = useState<Task[]>([])
+
+  const fetchTasks = async () => {
+    const { data, error } = await supabase.from('tasks').select()
+    if (data) setTasks(data as Task[])
+    if (error) console.error(error)
+  }
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut()
+    if (error) console.error(error)
+  }
 
   useEffect(() => {
-    // Check current session on load
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setLoading(false)
     })
 
-    // Listen for sign in / sign out events
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session)
-      }
+      (_event, session) => setSession(session)
     )
 
     return () => subscription.unsubscribe()
   }, [])
 
-  const columns = statuses.map((status) => {
-    const tasksInColumn = tasks.filter((task) => task.status === status)
-    return {
-      status,
-      tasks: tasksInColumn
-    }
-  })
+  useEffect(() => {
+    if (session) fetchTasks()
+  }, [session])
 
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
-  if (!session) {
-    return <SignIn />
-  }
+  if (loading) return <div>Loading...</div>
+  if (!session) return <SignIn />
 
   return (
     <>
-      <div className='flex divide-x'>
-        {columns.map((column) => (
-          <div key={column.status}>
-            <h2 className='text-3xl p-2 font-bold text-red-500'>{column.status}</h2>
-            {column.tasks.map((task) => <UserTask key={task.id} task={task}></UserTask>)}
-          </div>
+      <AddTask userId={session.user.id} onTaskAdded={fetchTasks} />
+      <div className="flex divide-x">
+        {statuses.map((status) => (
+          <Column
+            key={status}
+            status={status}
+            tasks={tasks.filter((task) => task.status === status)}
+            onTaskUpdated={fetchTasks}
+          />
         ))}
+      </div>
+
+      <div className="p-4">
+        <button
+          onClick={handleLogout}
+          className="px-3 py-1 border-2 border-red-500 text-red-500 rounded font-bold"
+        >
+          Log Out
+        </button>
       </div>
     </>
   )
