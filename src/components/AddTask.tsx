@@ -38,37 +38,37 @@ const AddTask = ({ userId, onTaskAdded }: { userId: string; onTaskAdded: () => v
   }
 
   return (
-    <div className="flex gap-2 p-2 items-center">
-      <input
+    <div className="flex gap-2 p-2 items-center justify-center">
+    <input
         type="text"
         placeholder="New task title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="border rounded px-2 py-1"
-      />
-      <select
+        className="border border-gray-600 bg-gray-800 text-white placeholder-gray-400 rounded px-2 py-1"
+    />
+    <select
         value={status}
         onChange={(e) => setStatus(e.target.value as Status)}
-        className="border rounded px-2 py-1"
-      >
+        className="border border-gray-600 bg-gray-800 text-white rounded px-2 py-1"
+    >
         {statuses.map((s) => (
-          <option key={s} value={s}>{s}</option>
+        <option key={s} value={s}>{s}</option>
         ))}
-      </select>
-      <input
+    </select>
+    <input
         type="date"
         value={dueDate}
         onChange={(e) => setDueDate(e.target.value)}
-        className="border rounded px-2 py-1"
-      />
-      <button
+        className="border border-gray-600 bg-gray-800 text-white rounded px-2 py-1"
+    />
+    <button
         onClick={handleAddTask}
         disabled={loading}
-        className="px-3 py-1 border-2 border-blue-500 text-blue-500 rounded font-bold"
-      >
+        className="px-3 py-1 border-2 border-blue-500 text-blue-400 rounded font-bold hover:bg-blue-950"
+    >
         {loading ? "Adding..." : "Add Task"}
-      </button>
-      {error && <span className="text-red-500 text-sm">{error}</span>}
+    </button>
+    {error && <span className="text-red-400 text-sm">{error}</span>}
     </div>
   )
 }

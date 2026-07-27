@@ -44,9 +44,9 @@ export default function App() {
   if (!session) return <SignIn />
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-900">
       <AddTask userId={session.user.id} onTaskAdded={fetchTasks} />
-      <div className="flex divide-x">
+      <div className="flex justify-center gap-6">
         {statuses.map((status) => (
           <Column
             key={status}
@@ -57,7 +57,7 @@ export default function App() {
         ))}
       </div>
 
-      <div className="p-4">
+      <div className="p-4 flex justify-center">
         <button
           onClick={handleLogout}
           className="px-3 py-1 border-2 border-red-500 text-red-500 rounded font-bold"
@@ -65,6 +65,6 @@ export default function App() {
           Log Out
         </button>
       </div>
-    </>
+    </div>
   )
 }
